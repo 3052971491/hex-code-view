@@ -26,7 +26,7 @@ import {
   onErrorCaptured,
   nextTick,
   provide,
-  inject 
+  inject
 } from "vue";
 
 export const SetupApi = {
@@ -109,7 +109,17 @@ export const sfcTemplateCode: string = `<template>
       }
     }
   };
-</script>`;
+</script>
+
+<style lang="less">
+.hex-code-view {
+  
+  h1 {
+    color: pink;
+    font-size: 20px;
+  }
+}
+</style>`;
 
 /** 组合是API模板 */
 export const sfcSetupTemplateCode: string = `<template>
@@ -156,7 +166,17 @@ export const sfcSetupTemplateCode: string = `<template>
       }
     },
   };
-</script>`;
+</script>
+
+<style lang="less">
+.hex-code-view {
+  
+  h1 {
+    color: pink;
+    font-size: 20px;
+  }
+}
+</style>`;
 
 export function BuiltSetupFunction(code: string) {
   let componentScript = {}

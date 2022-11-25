@@ -1,5 +1,5 @@
 import type { StateType } from "./hex-code-view.d";
-import type { SetupContext } from "vue";
+import { onUnmounted, SetupContext } from "vue";
 import {
   defineComponent,
   reactive,
@@ -8,11 +8,11 @@ import {
   computed,
   watch,
   onMounted,
-  nextTick,
 } from "vue";
 import { parse } from "@vue/compiler-sfc";
 import { isNil, assign } from "lodash-es";
 import { BuiltSetupFunction } from "./helper";
+import { genStyleInjectionCode, stylesUpdateHandler, stylesDeleteHandler } from './style-loader';
 
 export default defineComponent({
   name: "HexCodeView",
@@ -23,12 +23,11 @@ export default defineComponent({
       default: "",
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const { value } = toRefs(props);
     const state = reactive<StateType>({
       sfcCode: ``,
       sfcDescriptor: null,
-      stylesUpdateHandler: null,
       hasError: false,
       errorMessage: "",
     });
@@ -36,7 +35,7 @@ export default defineComponent({
     const dynamicComponent = shallowRef({
       name: "",
       component: {
-        template: "<div>动态组件</div>",
+        template: "<div></div>",
       },
     });
 
@@ -63,11 +62,10 @@ export default defineComponent({
     );
 
     /** 生成Vue组件 */
-    const useGenerateComponent = async () => {
+    async function useGenerateComponent() {
       let _generateComponent: any = {};
       if (isNil(state.sfcDescriptor)) return;
       const { template, script, styles } = state.sfcDescriptor.descriptor;
-      console.log(styles);
       
       let { errors } = state.sfcDescriptor;
       //   错误警告
@@ -84,7 +82,7 @@ export default defineComponent({
       /** script 字符串 */
       let scriptCode = script ? script.content.trim() : ``;
       /** style 字符串 */
-      // const styleCodes = await genStyleInjectionCode(styles, "demo-999");
+      let styleCodes = await genStyleInjectionCode(styles, "hex-code-view-container");
 
       // template
       _generateComponent.template = `<div class="hex-code-view-container" >${templateCode}</div>`;
@@ -96,15 +94,16 @@ export default defineComponent({
           "componentScript ="
         );
         componentScript = BuiltSetupFunction(scriptCode);
-
         assign(_generateComponent, componentScript);
-        dynamicComponent.value = {
-          name: "DynamicComponent",
-          component: _generateComponent,
-        };
       }
 
       // style
+      stylesUpdateHandler(styleCodes);
+
+      dynamicComponent.value = {
+        name: "DynamicComponent",
+        component: _generateComponent,
+      };
     };
 
     const isCodeEmpty = computed(() => {
@@ -130,17 +129,19 @@ export default defineComponent({
       if (isTemplateEmpty) return;
     };
 
-    const build = (value: string) => {
+    const build = async (value: string) => {
       state.sfcCode = value;
       useCodeLint();
-      !state.hasError && useGenerateComponent();
+      !state.hasError && await useGenerateComponent();
     };
 
-    onMounted(() => {
-      nextTick(() => {
-        useGenerateComponent();
-      });
+    onMounted(async () => {
+      await useGenerateComponent();
     });
+
+    onUnmounted(() => {
+      stylesDeleteHandler();
+    })
 
     return {
       ...toRefs(state),
@@ -153,7 +154,7 @@ export default defineComponent({
 
     return (
       <>
-        <customComponent class="hex-code-view"></customComponent>
+        <customComponent></customComponent>
       </>
     );
   },

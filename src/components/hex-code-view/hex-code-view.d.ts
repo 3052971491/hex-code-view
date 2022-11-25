@@ -5,8 +5,6 @@ export interface StateType {
     sfcCode: string;
     /** SFC解析结果 */
     sfcDescriptor: SFCParseResult | null;
-    /** Style更新回调 */
-    stylesUpdateHandler: any | null;
     /** 语法是否错误 */
     hasError: boolean;
     /** 错误信息 */
