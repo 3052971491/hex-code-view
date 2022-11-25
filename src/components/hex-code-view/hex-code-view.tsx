@@ -5,7 +5,6 @@ import {
   reactive,
   toRefs,
   shallowRef,
-  ref,
   computed,
   watch,
   onMounted,
@@ -13,11 +12,7 @@ import {
 } from "vue";
 import { parse } from "@vue/compiler-sfc";
 import { isNil, assign } from "lodash-es";
-import {
-  sfcTemplateCode,
-  sfcSetupTemplateCode,
-  BuiltSetupFunction,
-} from "./helper";
+import { BuiltSetupFunction } from "./helper";
 
 export default defineComponent({
   name: "HexCodeView",
@@ -25,7 +20,7 @@ export default defineComponent({
     value: {
       type: String,
       required: true,
-      default: '',
+      default: "",
     },
   },
   setup(props, { emit }) {
@@ -44,7 +39,6 @@ export default defineComponent({
         template: "<div>动态组件</div>",
       },
     });
-
 
     watch(
       () => value.value,
@@ -68,13 +62,13 @@ export default defineComponent({
       }
     );
 
-    
-
     /** 生成Vue组件 */
     const useGenerateComponent = async () => {
       let _generateComponent: any = {};
       if (isNil(state.sfcDescriptor)) return;
       const { template, script, styles } = state.sfcDescriptor.descriptor;
+      console.log(styles);
+      
       let { errors } = state.sfcDescriptor;
       //   错误警告
       if (errors && errors.length) {
@@ -156,9 +150,11 @@ export default defineComponent({
   },
   render(props: any, context: SetupContext) {
     const customComponent = this.dynamicComponent.component;
-    
-    return <>
-      <customComponent class="hex-code-view"></customComponent>
-    </>;
+
+    return (
+      <>
+        <customComponent class="hex-code-view"></customComponent>
+      </>
+    );
   },
 });

@@ -122,6 +122,8 @@ const option: editor.IStandaloneEditorConstructionOptions = {
   columnSelection: false, // 启用列编辑 按下shift键位然后按↑↓键位可以实现列选择 然后实现列编辑
   folding: true, // 是否启用代码折叠
   fixedOverflowWidgets: true, // 超出编辑器大小的使用fixed属性显示
+  renderLineHighlight: 'gutter', // 当前行突出显示方式
+  roundedSelection: false, // 选区是否有圆角
   // 编辑器悬停配置
   hover: {
     sticky: true, // 悬停是否粘滞，可以点击并选择其内容

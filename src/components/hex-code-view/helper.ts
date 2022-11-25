@@ -131,8 +131,6 @@ export const sfcSetupTemplateCode: string = `<template>
     props: {},
     emits: [],
     setup(props, context) {
-      const { ref, computed, reactive, onMounted } = vue;
-      
       onMounted(()=> {
         console.log('onMounted!!')
       })
@@ -163,11 +161,47 @@ export const sfcSetupTemplateCode: string = `<template>
 export function BuiltSetupFunction(code: string) {
   let componentScript = {}
   let scriptCode = `try {
-    ${code}
-    return componentScript
-  } catch (error) {
-    console.error(error)
-  }`;
+  /////////////////////////////////// 内置模块 vue api 开始 ///////////////////////////////////
+  const {
+    reactive,
+    isReactive,
+    shallowReactive,
+    toRef,
+    toRefs,
+    shallowRef,
+    triggerRef,
+    customRef,
+    ref,
+    unref,
+    isRef,
+    isProxy,
+    readonly,
+    shallowReadonly,
+    toRaw,
+    markRaw,
+    computed,
+    watch,
+    onBeforeMount,
+    onMounted,
+    onBeforeUpdate,
+    onUpdated,
+    onBeforeUnmount,
+    onUnmounted,
+    onErrorCaptured,
+    nextTick,
+    provide,
+    inject 
+  } = vue;
+  /////////////////////////////////// 内置模块 vue api 结束 ///////////////////////////////////
+
+  /////////////////////////////////// 自定义模块 开始 /////////////////////////////////////////
+  ${code}
+  /////////////////////////////////// 自定义模块 结束 /////////////////////////////////////////
+
+  return componentScript
+} catch (error) {
+  console.error(error)
+}`;
 
   componentScript = new Function("componentScript", "vue", scriptCode).call(
     null,

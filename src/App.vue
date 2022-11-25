@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HexCodeView, HexMonacoEditor } from './components/index';
+import { HexCodeView, HexMonacoEditor, HexCodemirror } from './components/index';
 import { sfcTemplateCode, sfcSetupTemplateCode } from './components/hex-code-view/helper'
 import { ref } from 'vue';
 const code = ref(sfcTemplateCode);
@@ -12,9 +12,7 @@ const handleChangeClick = () => {
 const templateType = ref(0);
 
 const handleTypeChange = () => {
-  
   code.value = templateType.value ? sfcSetupTemplateCode : sfcTemplateCode;
-  CodeView.value.build(code.value);
   editor.value.setEditorContent(code.value)
 }
 </script>
@@ -36,7 +34,7 @@ const handleTypeChange = () => {
     </header>
     <div class="main-container">
       <div class="code-editor flex-1">
-        <HexMonacoEditor ref="editor" v-model:value="code" language="vue"  />
+        <HexCodemirror ref="editor" v-model:value="code" language="vue" />
       </div>
       <div class="preview-container box flex-1">
         <HexCodeView  ref="CodeView" :value="code"></HexCodeView>
