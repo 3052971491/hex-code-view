@@ -13,7 +13,7 @@ const templateType = ref(0);
 
 const handleTypeChange = () => {
   code.value = templateType.value ? sfcSetupTemplateCode : sfcTemplateCode;
-  editor.value.setEditorContent(code.value)
+  editor.value.setEditorContent(code.value);
 }
 </script>
  

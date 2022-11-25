@@ -54,6 +54,7 @@ export default defineComponent({
       () => state.sfcCode,
       () => {
         state.sfcDescriptor = parse(state.sfcCode.trim());
+        useGenerateComponent();
       },
       {
         immediate: true,
