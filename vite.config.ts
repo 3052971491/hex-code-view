@@ -4,6 +4,8 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  publicDir: "public",
+  base: './',
   plugins: [vue(), vueJsx()],
   css: {
     modules: {
@@ -24,4 +26,15 @@ export default defineConfig({
       },
     ],
   },
+  build: {
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+      keep_classnames: true,
+    },
+    sourcemap: false,
+    chunkSizeWarningLimit: 2000,
+  }
 })
