@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build docker
+        run: |
+          docker build -t hex-code-view:dev .
+
+      - name: Login to Docker Registry
+        run: docker login -u ${{ secrets.HUAWEI_CLOUD_USERNAME }} -p ${{ secrets.HUAWEI_CLOUD_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
+
+      - name: Push to Docker Registry
+        run: |
+          docker tag hex-code-view:dev swr.cn-north-4.myhuaweicloud.com/yuanjunjie/hex-code-view:dev
+          docker push swr.cn-north-4.myhuaweicloud.com/yuanjunjie/hex-code-view:dev
+
+  deploy:
+    needs: [build]
+    name: Deploy
+    runs-on: fd-dev
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Update docker images
+        run: |
+          sudo su
+          sudo docker pull swr.cn-north-4.myhuaweicloud.com/yuanjunjie/hex-code-view:dev
+
+      - name: Login to Docker Registry
+        run: |
+          sudo su
+          sudo docker login -u ${{ secrets.HUAWEI_CLOUD_USERNAME }} -p ${{ secrets.HUAWEI_CLOUD_PASSWORD }} swr.cn-north-4.myhuaweicloud.com
+
+      - name: Run
+        run: |
+          sudo su
+          sudo docker compose -f docker-compose.yml up -d
+
+      - name: Clear Docker Cache
+        run: |
+          sudo su
+          sudo docker image prune -f
+          sudo docker volume prune -f

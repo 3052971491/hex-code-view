@@ -1,0 +1,15 @@
+version: '3'
+
+networks:
+  web_net:
+    external: true
+
+services:
+  vueui:
+    container_name: hex-code-view
+    image: swr.cn-north-4.myhuaweicloud.com/yuanjunjie/hex-code-view:dev
+    restart: always
+    networks:
+      - web_net
+    ports:
+      - '8088:80'
